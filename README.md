@@ -2,10 +2,11 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.0-blue)
+![Version](https://img.shields.io/badge/version-2.5-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Python](https://img.shields.io/badge/python-3.6%2B-blue)
-![Status](https://img.shields.io/badge/status-Active-brightgreen)
+![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen)
+![Exports](https://img.shields.io/badge/exports-TXT%20%7C%20JSON%20%7C%20CSV-blue)
 
 **Advanced IP Reconnaissance & Port Discovery Tool**
 
@@ -30,40 +31,36 @@ Perfect for:
 
 ## ✨ Features
 
-- **🌍 IP Geolocation** - Get detailed geographic and ISP information
+- **⚡ Professional UI** - Beautiful color-coded output with ASCII art banner
+- **🌍 IP Geolocation** - Get detailed geographic and ISP information  
 - **🔌 Advanced Port Scanning** - Scan any port range from 1-65535
 - **🛡️ Security Detection** - Identify VPNs, proxies, and hosting providers
-- **📊 Threat Assessment** - Real-time threat level evaluation
-- **⚡ Progress Tracking** - Live scanning progress with percentage indicator
-- **📁 Batch Processing** - Scan multiple targets from a file
-- **💾 Report Generation** - Automatic timestamped report saving
-- **🎨 Beautiful UI** - Color-coded output with ASCII art
-- **🔄 Multiple APIs** - Cross-reference data from multiple sources
-- **📱 Interactive & CLI Modes** - Use menu system or command line
+- **📊 Threat Assessment** - Real-time threat level evaluation with cross-API verification
+- **📈 Progress Tracking** - Live visual progress bar with percentage display
+- **📁 Batch Processing** - Scan multiple targets concurrently from a file
+- **💾 Multi-Format Exports** - Save reports as TXT, JSON, and CSV simultaneously
+- **🔄 Multiple APIs** - Cross-reference data from multiple threat intelligence sources
+- **📱 Dual Mode Interface** - Interactive menu system or command-line arguments
 
 ---
 
 ## 🚀 Quick Start
 
-### Installation
+## 🚀 Quick Start (2 Minutes)
 
 ```bash
-# Clone the repository
+# 1. Clone and install
 git clone https://github.com/xdrew87/network-osint-scanner.git
 cd network-osint-scanner
-
-# Install dependencies
 pip install -r requirements.txt
-```
 
-### Basic Usage
-
-```bash
-# Interactive menu mode (no arguments)
-python main.py
-
-# Direct scan (with IP/domain)
+# 2. Run your first scan
 python main.py 8.8.8.8
+
+# 3. Check the generated reports
+# - report_8.8.8.8_*.txt
+# - report_8.8.8.8_*.json  
+# - report_8.8.8.8_*.csv
 ```
 
 ---
@@ -79,11 +76,11 @@ python main.py
 ```
 
 **Menu Options:**
-- **[1] Full OSINT Scan** - Complete reconnaissance with custom port range
-- **[2] Port Scan Only** - Fast port scanning for specific ranges
-- **[3] Quick OSINT** - Fast scan using common ports
-- **[4] Batch Scan** - Process multiple targets from a file
-- **[5] Help & Documentation** - View built-in help
+- **[1] Full OSINT Scan** - Complete reconnaissance with geolocation + custom port range
+- **[2] Port Scan Only** - Fast port scanning for targeted analysis
+- **[3] Quick OSINT** - Speed-optimized scan using common ports
+- **[4] Batch Scan** - Concurrent scanning of multiple targets from file
+- **[5] Help & Documentation** - Built-in usage guide and examples
 - **[0] Exit** - Quit the application
 
 ### Command Line Mode
@@ -140,7 +137,55 @@ VPNAPIIO_API_KEY = "your_actual_api_key_here"
 
 ---
 
-## 📊 Output Information
+## 📊 Export Formats
+
+Every scan automatically generates **three report formats**:
+
+### Text Report (.txt)
+Human-readable format with formatted sections:
+```
+OSINT REPORT FOR 8.8.8.8
+═══════════════════════════════════════════════════════
+GEO-IP DATA:
+  IP Address: 8.8.8.8
+  Country: United States
+  ISP: Google
+  ...
+PORT SCAN RESULTS:
+  Open Ports: 80, 443
+```
+
+### JSON Export (.json)
+Structured data for automation and integration:
+```json
+{
+  "metadata": {
+    "scan_date": "2026-02-09T15:30:45",
+    "target_ip": "8.8.8.8",
+    "scanner": "Network OSINT Scanner v2.5"
+  },
+  "geolocation": { ... },
+  "ports": { "open_count": 2, "open_ports": [80, 443] }
+}
+```
+
+### CSV Export (.csv)
+Spreadsheet-compatible format for analysis:
+```csv
+Field,Value
+Scan Date,2026-02-09 15:30:45
+Target IP,8.8.8.8
+Country,United States
+...
+Open Port,80
+Open Port,443
+```
+
+**All three formats are generated automatically after each scan!**
+
+---
+
+## 📈 Output Information
 
 ### Geolocation Data
 - IP Address
@@ -157,67 +202,102 @@ VPNAPIIO_API_KEY = "your_actual_api_key_here"
 - Threat Level Assessment
 - Fraud Score (if API available)
 
-### Port Scan Results
-- Open ports list
-- Real-time scanning progress
-- Timestamped reports
+### Scan Results
+- ✓ Open ports discovery
+- ✓ Visual progress bar (real-time)
+- ✓ Threat level classification
+- ✓ Automatic timestamped reports
+- ✓ Multi-format export (TXT + JSON + CSV)
 
 ---
 
 ## 💻 Examples
 
-### Example 1: Quick OSINT of Google DNS
+### Example 1: Quick Scan
 ```bash
 python main.py 8.8.8.8
+# Enter port range: 1 to 1000
+# Generates 3 reports automatically
 ```
-Enter port range: 1 to 100
 
-### Example 2: Full scan of cloudflare.com
+### Example 2: Domain with Custom Range
 ```bash
-python main.py cloudflare.com
+python main.py google.com
+# Reports saved as:
+# - report_142.251.32.46_20260209_143015.txt
+# - report_142.251.32.46_20260209_143015.json
+# - report_142.251.32.46_20260209_143015.csv
 ```
-Enter port range: 1 to 65535
 
-### Example 3: Batch scan from file
+### Example 3: Interactive Menu
 ```bash
 python main.py
-# Select option [4]
+# Select [1] for Full OSINT
+# Select [4] for Batch Scan
+# Select [5] for Help
+```
+
+### Example 4: Batch Scanning
+```bash
+# Create targets.txt
+# 8.8.8.8
+# google.com
+# cloudflare.com
+
+python main.py
+# Select [4] Batch Scan
 # Enter: targets.txt
 ```
+
+## 🎯 Common Use Cases
+
+| Scenario | Command | Mode |
+|----------|---------|------|
+| Quick IP check | `python main.py 8.8.8.8` | CLI |
+| Domain reconnaissance | `python main.py google.com` | CLI |
+| Comprehensive scan | `python main.py` → [1] | Interactive |
+| Multiple targets | `python main.py` → [4] | Batch |
+| Learn features | `python main.py` → [5] | Help |
 
 ---
 
 ## 📋 Requirements
 
-- Python 3.6+
-- requests
-- socket (built-in)
-- json (built-in)
+- Python 3.6 or higher
+- `requests` library (for API calls)
+- Standard library modules: `socket`, `json`, `csv`, `sys`, `time`, `os`
 
 ### Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
+Or manually:
+```bash
+pip install requests
+```
+
 ---
 
 ## 🔒 Privacy & Disclaimer
 
-**⚠️ Important:**
+**⚠️ Legal & Ethical Notice:**
 
 This tool is designed for:
-- Academic and educational purposes
-- Authorized security testing
-- Personal network administration
-- Legitimate penetration testing
+- ✓ Authorized security testing
+- ✓ Personal network administration  
+- ✓ Legitimate penetration testing with written permission
+- ✓ Educational and research purposes
+- ✓ Network reconnaissance on systems you own
 
-**DO NOT** use this tool:
-- Without explicit authorization
-- Against targets you don't own or have permission to test
-- For malicious purposes
-- To probe networks illegally
+**This tool should NOT be used for:**
+- ✗ Unauthorized network access
+- ✗ Scanning without explicit permission
+- ✗ Malicious purposes
+- ✗ Violating local laws or regulations
+- ✗ Probing production systems without approval
 
-Users are responsible for complying with all applicable laws and regulations.
+**Users are solely responsible for legal compliance.**
 
 ---
 

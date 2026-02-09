@@ -25,6 +25,7 @@ import requests
 import sys
 import time
 import json
+import csv
 from datetime import datetime
 import os
 
@@ -51,15 +52,15 @@ def print_banner():
 	print(f"{Colors.BOLD}{Colors.HEADER}")
 	print("  ╔════════════════════════════════════════════════════════════════════╗")
 	print("  ║                                                                    ║")
-	print("  ║      ███╗   ██╗███████╗████████╗██╗    ██╗ ██████╗ ██████╗ ██╗  ║")
-	print("  ║      ████╗  ██║██╔════╝╚══██╔══╝██║    ██║██╔═══██╗██╔══██╗██║  ║")
-	print("  ║      ██╔██╗ ██║███████╗   ██║   ██║ █╗ ██║██║   ██║██████╔╝██║  ║")
-	print("  ║      ██║╚██╗██║╚════██║   ██║   ██║███╗██║██║   ██║██╔══██╗╚═╝  ║")
-	print("  ║      ██║ ╚████║███████║   ██║   ╚███╔███╝╚██████╔╝██║  ██║██╗   ║")
-	print("  ║      ╚═╝  ╚═══╝╚══════╝   ╚═╝    ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝   ║")
+	print("  ║      ███╗   ██╗███████╗████████╗██╗    ██╗ ██████╗ ██████╗ ██╗     ║")
+	print("  ║      ████╗  ██║██╔════╝╚══██╔══╝██║    ██║██╔═══██╗██╔══██╗██║     ║")
+	print("  ║      ██╔██╗ ██║███████╗   ██║   ██║ █╗ ██║██║   ██║██████╔╝██║     ║")
+	print("  ║      ██║╚██╗██║╚════██║   ██║   ██║███╗██║██║   ██║██╔══██╗╚═╝     ║")
+	print("  ║      ██║ ╚████║███████║   ██║   ╚███╔███╝╚██████╔╝██║  ██║██╗      ║")
+	print("  ║      ╚═╝  ╚═══╝╚══════╝   ╚═╝    ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝     ║")
 	print("  ║                                                                    ║")
 	print("  ║           Advanced IP Reconnaissance & Port Scanner Tool           ║")
-	print("  ║                         Version 2.0                                ║")
+	print("  ║                         Version 2.5                                ║")
 	print("  ║                                                                    ║")
 	print("  ║                       Developed by: xdrew87                        ║")
 	print("  ║               https://github.com/xdrew87/network-osint-scanner     ║")
@@ -68,16 +69,16 @@ def print_banner():
 	print(f"{Colors.END}\n")
 
 def print_menu():
-	"""Print main menu with ASCII borders"""
+	"""Print enhanced main menu with professional styling"""
 	print(f"{Colors.BOLD}{Colors.CYAN}╔{'═'*68}╗{Colors.END}")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END} {Colors.BOLD}{Colors.YELLOW}⚙ MAIN MENU{Colors.END}" + " "*54 + f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END} {Colors.BOLD}{Colors.YELLOW}⚙  SCANNING OPTIONS{Colors.END}" + " "*47 + f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}")
 	print(f"{Colors.BOLD}{Colors.CYAN}╠{'═'*68}╣{Colors.END}")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[1]{Colors.END} Full OSINT Scan (Geolocation + Port Scan)")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[2]{Colors.END} Port Scan Only (Custom Range)")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[3]{Colors.END} Quick OSINT (Common Ports)")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[4]{Colors.END} Batch Scan (Multiple IPs)")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.CYAN}[5]{Colors.END} Help & Documentation")
-	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.RED}[0]{Colors.END} Exit")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[1]{Colors.END}  🔍 Full OSINT Scan       (Geolocation + Port Analysis)")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[2]{Colors.END}  🔌 Port Scan Only        (Custom Port Range)")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[3]{Colors.END}  ⚡ Quick OSINT           (Common Ports Only)")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.GREEN}[4]{Colors.END}  📊 Batch Scan           (Multiple Targets)")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.CYAN}[5]{Colors.END}  ❓ Help & Documentation   (Usage Guide)")
+	print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.RED}[0]{Colors.END}  🚪 Exit                 (Quit Program)")
 	print(f"{Colors.BOLD}{Colors.CYAN}╚{'═'*68}╝{Colors.END}\n")
 
 def print_help():
@@ -111,14 +112,17 @@ def scan_ports(ip, ports=COMMON_PORTS, timeout=1):
 			result = sock.connect_ex((ip, port))
 			if result == 0:
 				open_ports.append(port)
-				print(f"  {Colors.GREEN}✓{Colors.END} Port {port} is OPEN", flush=True)
+				print(f"  {Colors.GREEN}✓{Colors.END} Port {port:<6} {Colors.BOLD}OPEN{Colors.END}", flush=True)
 			sock.close()
 		except Exception:
 			continue
-		# Progress indicator
+		# Enhanced progress bar
 		progress = int((idx / total) * 100)
-		print(f"\r  Scanning: {progress}% ({idx}/{total})", end="", flush=True)
-	print(f"\r  Scanning: 100% ({total}/{total})      \n", flush=True)
+		bar_length = 30
+		filled = int(bar_length * idx / total)
+		bar = '█' * filled + '░' * (bar_length - filled)
+		print(f"\r  [{bar}] {progress}% ({idx}/{total})", end="", flush=True)
+	print(f"\r  [{('█' * bar_length)}] 100% ({total}/{total}) {Colors.GREEN}Complete{Colors.END}\n", flush=True)
 	return open_ports
 
 def get_ipinfo(ip):
@@ -167,29 +171,33 @@ def osint_report(ip, port_range=None):
 	vpnapi = get_vpnapiio(ip, VPNAPIIO_API_KEY)
 
 	if ipinfo:
-		print(f"\n{Colors.BOLD}{Colors.BLUE}[GEO-IP DATA]{Colors.END}")
-		print(f"  IP:                  {Colors.GREEN}{ipinfo.get('ip', ip)}{Colors.END}")
-		print(f"  Hostname:            {ipinfo.get('hostname', 'N/A')}")
-		print(f"  City:                {ipinfo.get('city', 'N/A')}")
-		print(f"  Region:              {ipinfo.get('region', 'N/A')}")
-		print(f"  Country:             {ipinfo.get('country_name', ipinfo.get('country', 'N/A'))}")
-		print(f"  ISP:                 {ipinfo.get('isp', 'N/A')}")
-		print(f"  Organization:        {ipinfo.get('org', 'N/A')}")
-		print(f"  ASN:                 {ipinfo.get('asn', ipinfo.get('asn_number', 'N/A'))}")
-		print(f"  Connection Type:     {ipinfo.get('connection_type', 'N/A')}")
-		print(f"  Threat Level:        {Colors.RED}{ipinfo.get('threat_level', 'N/A')}{Colors.END}")
+		print(f"\n{Colors.BOLD}{Colors.BLUE}╔ GEO-IP DATA ╗{Colors.END}")
+		print(f"  {Colors.CYAN}IP Address{Colors.END:<20} {Colors.GREEN}{ipinfo.get('ip', ip)}{Colors.END}")
+		print(f"  {Colors.CYAN}Hostname{Colors.END:<20} {ipinfo.get('hostname', 'N/A')}")
+		print(f"  {Colors.CYAN}City{Colors.END:<20} {ipinfo.get('city', 'N/A')}")
+		print(f"  {Colors.CYAN}Region{Colors.END:<20} {ipinfo.get('region', 'N/A')}")
+		print(f"  {Colors.CYAN}Country{Colors.END:<20} {ipinfo.get('country_name', ipinfo.get('country', 'N/A'))}")
+		print(f"  {Colors.CYAN}ISP{Colors.END:<20} {ipinfo.get('isp', 'N/A')}")
+		print(f"  {Colors.CYAN}Organization{Colors.END:<20} {ipinfo.get('org', 'N/A')}")
+		print(f"  {Colors.CYAN}ASN{Colors.END:<20} {ipinfo.get('asn', ipinfo.get('asn_number', 'N/A'))}")
+		print(f"  {Colors.CYAN}Connection Type{Colors.END:<20} {ipinfo.get('connection_type', 'N/A')}")
+		print(f"  {Colors.CYAN}Threat Level{Colors.END:<20} {Colors.RED}{ipinfo.get('threat_level', 'N/A')}{Colors.END}")
 		
 		is_vpn = ipinfo.get('is_vpn', False)
 		is_proxy = ipinfo.get('is_proxy', False)
 		is_hosting = ipinfo.get('is_hosting', False)
 		is_home_proxy = ipinfo.get('is_home_proxy', False)
 		
-		print(f"\n{Colors.BOLD}{Colors.BLUE}[SECURITY FLAGS]{Colors.END}")
-		print(f"  VPN Detected:        {Colors.RED if is_vpn else Colors.GREEN}{'YES' if is_vpn else 'NO'}{Colors.END}")
-		print(f"  Proxy Detected:      {Colors.RED if is_proxy else Colors.GREEN}{'YES' if is_proxy else 'NO'}{Colors.END}")
-		print(f"  Hosting Provider:    {Colors.RED if is_hosting else Colors.GREEN}{'YES' if is_hosting else 'NO'}{Colors.END}")
-		print(f"  Home Proxy:          {Colors.RED if is_home_proxy else Colors.GREEN}{'YES' if is_home_proxy else 'NO'}{Colors.END}")
-		print(f"  Premium Data:        {Colors.YELLOW}{'YES' if ipinfo.get('premium', False) else 'NO'}{Colors.END}")
+		print(f"\n{Colors.BOLD}{Colors.BLUE}╔ SECURITY FLAGS ╗{Colors.END}")
+		vpn_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_vpn else f"{Colors.GREEN}✓ NO{Colors.END}"
+		proxy_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_proxy else f"{Colors.GREEN}✓ NO{Colors.END}"
+		hosting_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_hosting else f"{Colors.GREEN}✓ NO{Colors.END}"
+		home_proxy_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_home_proxy else f"{Colors.GREEN}✓ NO{Colors.END}"
+		print(f"  VPN Detected:        {vpn_status}")
+		print(f"  Proxy Detected:      {proxy_status}")
+		print(f"  Hosting Provider:    {hosting_status}")
+		print(f"  Home Proxy:          {home_proxy_status}")
+		print(f"  Premium Data:        {Colors.YELLOW}{'✓ YES' if ipinfo.get('premium', False) else '○ NO'}{Colors.END}")
 	else:
 		print(f"{Colors.RED}[!] Could not retrieve geoip data.{Colors.END}")
 
@@ -210,31 +218,109 @@ def osint_report(ip, port_range=None):
 		hosting = hosting_qs or hosting_va
 		public_wifi = public_wifi_qs or public_wifi_va
 
-		print(f"\n{Colors.BOLD}{Colors.BLUE}[CROSS-CHECK - OTHER APIs]{Colors.END}")
-		print(f"  VPN/Proxy:           {Colors.RED if vpn_proxy else Colors.GREEN}{'YES' if vpn_proxy else 'NO'}{Colors.END}")
-		print(f"  Hosting:             {Colors.RED if hosting else Colors.GREEN}{'YES' if hosting else 'NO'}{Colors.END}")
-		print(f"  Public WiFi/Hotspot: {Colors.RED if public_wifi else Colors.GREEN}{'YES' if public_wifi else 'NO'}{Colors.END}")
+		print(f"\n{Colors.BOLD}{Colors.BLUE}╔ THREAT INTELLIGENCE ╗{Colors.END}")
+		vpn_proxy_status = f"{Colors.RED}⚠ YES{Colors.END}" if vpn_proxy else f"{Colors.GREEN}✓ NO{Colors.END}"
+		housting_status = f"{Colors.RED}⚠ YES{Colors.END}" if hosting else f"{Colors.GREEN}✓ NO{Colors.END}"
+		dwifi_status = f"{Colors.RED}⚠ YES{Colors.END}" if public_wifi else f"{Colors.GREEN}✓ NO{Colors.END}"
+		print(f"  VPN/Proxy Detected:  {vpn_proxy_status}")
+		print(f"  Hosting Provider:    {hosting_status}")
+		print(f"  Public Hotspot/Tor:  {wifi_status}")
 		if ipqs:
-			print(f"  Fraud Score (IPQS):  {Colors.YELLOW}{ipqs.get('fraud_score', 'N/A')}{Colors.END}")
+			fraud_score = ipqs.get('fraud_score', 'N/A')
+			print(f"  IPQualityScore:      {Colors.YELLOW}{fraud_score}{Colors.END}")
 		if vpnapi:
-			print(f"  VPNAPI Score:        {Colors.YELLOW}{vpnapi.get('score', 'N/A')}{Colors.END}")
+			vpnapi_score = vpnapi.get('score', 'N/A')
+			print(f"  VPNAPI Score:        {Colors.YELLOW}{vpnapi_score}{Colors.END}")
 
-	print(f"\n{Colors.CYAN}[*] Scanning Ports...{Colors.END}")
-	print(f"{Colors.BOLD}{Colors.BLUE}[PORT SCAN RESULTS]{Colors.END}")
+	print(f"\n{Colors.CYAN}[*] Performing Port Analysis...{Colors.END}")
+	print(f"{Colors.BOLD}{Colors.BLUE}╔ PORT SCAN RESULTS ╗{Colors.END}")
 	if port_range:
 		open_ports = scan_ports(ip, port_range)
 	else:
 		open_ports = scan_ports(ip)
 	
 	if open_ports:
-		print(f"  {Colors.GREEN}✓ Open Ports Found: {', '.join(str(p) for p in open_ports)}{Colors.END}")
+		port_str = Colors.GREEN + ', '.join(str(p) for p in open_ports) + Colors.END
+		print(f"  {Colors.GREEN}✓{Colors.END} Total Open Ports: {len(open_ports)}")
+		print(f"  {Colors.GREEN}📍{Colors.END} Ports: {port_str}")
 	else:
-		print(f"  {Colors.YELLOW}○ No open ports found or host unreachable.{Colors.END}")
+		print(f"  {Colors.YELLOW}○ No open ports detected{Colors.END}")
 	
 	print(f"\n{Colors.BOLD}{Colors.HEADER}{'='*70}{Colors.END}\n")
 	
 	# Save report to file
 	save_report(ip, ipinfo, open_ports)
+
+def export_json(ip, ipinfo, open_ports):
+	"""Export scan results to JSON format"""
+	timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+	filename = f"report_{ip}_{timestamp}.json"
+	
+	try:
+		data = {
+			"metadata": {
+				"scan_date": datetime.now().isoformat(),
+				"target_ip": ip,
+				"scanner": "Network OSINT Scanner v2.5"
+			},
+			"geolocation": ipinfo if ipinfo else {},
+			"ports": {
+				"open_count": len(open_ports),
+				"open_ports": open_ports
+			}
+		}
+		
+		with open(filename, 'w') as f:
+			json.dump(data, f, indent=2)
+		
+		print(f"{Colors.GREEN}[✓]{Colors.END} JSON exported: {Colors.CYAN}{filename}{Colors.END}")
+		return filename
+	except Exception as e:
+		print(f"{Colors.RED}[!]{Colors.END} JSON export failed: {str(e)}")
+		return None
+
+def export_csv(ip, ipinfo, open_ports):
+	"""Export scan results to CSV format"""
+	timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+	filename = f"report_{ip}_{timestamp}.csv"
+	
+	try:
+		with open(filename, 'w', newline='') as f:
+			writer = csv.writer(f)
+			
+			# Write header
+			writer.writerow(["Field", "Value"])
+			writer.writerow(["Scan Date", datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+			writer.writerow(["Target IP", ip])
+			writer.writerow(["", ""])
+			
+			# Write geolocation info
+			if ipinfo:
+				writer.writerow(["GEOLOCATION", ""])
+				writer.writerow(["IP", ipinfo.get('ip', ip)])
+				writer.writerow(["Hostname", ipinfo.get('hostname', 'N/A')])
+				writer.writerow(["Country", ipinfo.get('country_name', 'N/A')])
+				writer.writerow(["City", ipinfo.get('city', 'N/A')])
+				writer.writerow(["ISP", ipinfo.get('isp', 'N/A')])
+				writer.writerow(["Organization", ipinfo.get('org', 'N/A')])
+				writer.writerow(["ASN", ipinfo.get('asn', 'N/A')])
+				writer.writerow(["Threat Level", ipinfo.get('threat_level', 'N/A')])
+				writer.writerow(["VPN Detected", ipinfo.get('is_vpn', False)])
+				writer.writerow(["Proxy Detected", ipinfo.get('is_proxy', False)])
+				writer.writerow(["Hosting Provider", ipinfo.get('is_hosting', False)])
+				writer.writerow(["", ""])
+			
+			# Write port results
+			writer.writerow(["PORTS", ""])
+			writer.writerow(["Total Open Ports", len(open_ports)])
+			for port in open_ports:
+				writer.writerow(["Open Port", port])
+		
+		print(f"{Colors.GREEN}[✓]{Colors.END} CSV exported:  {Colors.CYAN}{filename}{Colors.END}")
+		return filename
+	except Exception as e:
+		print(f"{Colors.RED}[!]{Colors.END} CSV export failed: {str(e)}")
+		return None
 
 def save_report(ip, ipinfo, open_ports):
 	"""Save scan report to file"""
@@ -277,9 +363,14 @@ def save_report(ip, ipinfo, open_ports):
 			else:
 				f.write("No open ports found.\n")
 		
-		print(f"{Colors.GREEN}[✓] Report saved as: {filename}{Colors.END}\n")
+		print(f"{Colors.GREEN}[✓]{Colors.END} Report saved: {Colors.CYAN}{filename}{Colors.END}")
+		
+		# Export to JSON and CSV
+		export_json(ip, ipinfo, open_ports)
+		export_csv(ip, ipinfo, open_ports)
+		print()
 	except Exception as e:
-		print(f"{Colors.RED}[!] Could not save report: {str(e)}{Colors.END}\n")
+		print(f"{Colors.RED}[!]{Colors.END} Error saving report: {str(e)}\n")
 
 def interactive_mode():
 	"""Interactive menu mode"""
@@ -291,8 +382,10 @@ def interactive_mode():
 		choice = input(f"{Colors.CYAN}Select an option (0-5): {Colors.END}").strip()
 		
 		if choice == '0':
-			print(f"\n{Colors.GREEN}Thanks for using Network OSINT Scanner!{Colors.END}")
-			print(f"{Colors.CYAN}Developed by: xdrew87{Colors.END}\n")
+			print(f"\n{Colors.GREEN}{'='*70}{Colors.END}")
+			print(f"{Colors.GREEN}  ✓ Thanks for using Network OSINT Scanner v2.5!{Colors.END}")
+			print(f"{Colors.CYAN}  Developed by: xdrew87{Colors.END}")
+			print(f"{Colors.GREEN}{'='*70}{Colors.END}\n")
 			sys.exit(0)
 		elif choice == '1':
 			clear_screen()

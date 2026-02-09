@@ -2,7 +2,7 @@
 """
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                  NETWORK OSINT & PORT SCANNER                       ║
-║               Advanced IP Reconnaissance Tool v2.0                  ║
+║               Advanced IP Reconnaissance Tool v2.5                  ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
 Author:     xdrew87
@@ -13,11 +13,13 @@ Description: Advanced network reconnaissance tool combining OSINT and
 
 Features:
   • Real-time port scanning (1-65535)
-  • Geolocation tracking
-  • VPN/Proxy detection
-  • ISP and ASN lookup
+  • Comprehensive geolocation tracking (coordinates, timezone, currency)
+  • VPN/Proxy/Datacenter/Tor detection
+  • ISP, ASN, and RIR lookup
   • Threat level assessment
-  • Multiple API cross-referencing
+  • Multi-language and currency information
+  • Security flag analysis (8+ detection types)
+  • Multi-format export (TXT, JSON, CSV)
 """
 
 import socket
@@ -172,16 +174,24 @@ def osint_report(ip, port_range=None):
 
 	if ipinfo:
 		print(f"\n{Colors.BOLD}{Colors.BLUE}╔ GEO-IP DATA ╗{Colors.END}")
-		print(f"  {Colors.CYAN}IP Address{Colors.END:<20} {Colors.GREEN}{ipinfo.get('ip', ip)}{Colors.END}")
-		print(f"  {Colors.CYAN}Hostname{Colors.END:<20} {ipinfo.get('hostname', 'N/A')}")
-		print(f"  {Colors.CYAN}City{Colors.END:<20} {ipinfo.get('city', 'N/A')}")
-		print(f"  {Colors.CYAN}Region{Colors.END:<20} {ipinfo.get('region', 'N/A')}")
-		print(f"  {Colors.CYAN}Country{Colors.END:<20} {ipinfo.get('country_name', ipinfo.get('country', 'N/A'))}")
-		print(f"  {Colors.CYAN}ISP{Colors.END:<20} {ipinfo.get('isp', 'N/A')}")
-		print(f"  {Colors.CYAN}Organization{Colors.END:<20} {ipinfo.get('org', 'N/A')}")
-		print(f"  {Colors.CYAN}ASN{Colors.END:<20} {ipinfo.get('asn', ipinfo.get('asn_number', 'N/A'))}")
-		print(f"  {Colors.CYAN}Connection Type{Colors.END:<20} {ipinfo.get('connection_type', 'N/A')}")
-		print(f"  {Colors.CYAN}Threat Level{Colors.END:<20} {Colors.RED}{ipinfo.get('threat_level', 'N/A')}{Colors.END}")
+		print(f"  {Colors.CYAN}IP Address{Colors.END:<22} {Colors.GREEN}{ipinfo.get('ip', ip)}{Colors.END}")
+		print(f"  {Colors.CYAN}Hostname{Colors.END:<22} {ipinfo.get('hostname', 'N/A')}")
+		print(f"  {Colors.CYAN}Country{Colors.END:<22} {ipinfo.get('country_name', 'N/A')} ({ipinfo.get('country_code', 'N/A')})")
+		print(f"  {Colors.CYAN}City{Colors.END:<22} {ipinfo.get('city', 'N/A')}")
+		print(f"  {Colors.CYAN}Region{Colors.END:<22} {ipinfo.get('region', 'N/A')}")
+		print(f"  {Colors.CYAN}Continent{Colors.END:<22} {ipinfo.get('continent_name', 'N/A')} ({ipinfo.get('continent_code', 'N/A')})")
+		print(f"  {Colors.CYAN}Coordinates{Colors.END:<22} {ipinfo.get('latitude', 'N/A')}, {ipinfo.get('longitude', 'N/A')}")
+		print(f"  {Colors.CYAN}Accuracy Radius{Colors.END:<22} {ipinfo.get('accuracy_radius', 'N/A')} km")
+		print(f"  {Colors.CYAN}Timezone{Colors.END:<22} {ipinfo.get('timezone_name', 'N/A')} (UTC{ipinfo.get('utc_offset', 0)/3600:+.0f})")
+		print(f"  {Colors.CYAN}Currency{Colors.END:<22} {ipinfo.get('currency_name', 'N/A')} ({ipinfo.get('currency_code', 'N/A')})")
+		print(f"  {Colors.CYAN}Language{Colors.END:<22} {ipinfo.get('language_name', 'N/A')} ({ipinfo.get('language_code', 'N/A')})")
+		print(f"  {Colors.CYAN}ISP{Colors.END:<22} {ipinfo.get('isp', 'N/A')}")
+		print(f"  {Colors.CYAN}Organization{Colors.END:<22} {ipinfo.get('org', 'N/A')}")
+		print(f"  {Colors.CYAN}ASN{Colors.END:<22} {ipinfo.get('asn', 'N/A')}")
+		print(f"  {Colors.CYAN}ASN Org{Colors.END:<22} {ipinfo.get('asn_org', 'N/A')}")
+		print(f"  {Colors.CYAN}RIR{Colors.END:<22} {ipinfo.get('rir', 'N/A')}")
+		print(f"  {Colors.CYAN}Connection Type{Colors.END:<22} {ipinfo.get('connection_type', 'N/A')}")
+		print(f"  {Colors.CYAN}Threat Level{Colors.END:<22} {Colors.RED}{ipinfo.get('threat_level', 'N/A')}{Colors.END}")
 		
 		is_vpn = ipinfo.get('is_vpn', False)
 		is_proxy = ipinfo.get('is_proxy', False)
@@ -193,10 +203,22 @@ def osint_report(ip, port_range=None):
 		proxy_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_proxy else f"{Colors.GREEN}✓ NO{Colors.END}"
 		hosting_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_hosting else f"{Colors.GREEN}✓ NO{Colors.END}"
 		home_proxy_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_home_proxy else f"{Colors.GREEN}✓ NO{Colors.END}"
+		is_tor = ipinfo.get('is_tor', False)
+		is_datacenter = ipinfo.get('is_datacenter', False)
+		is_residential = ipinfo.get('is_residential', False)
+		is_mobile = ipinfo.get('is_mobile', False)
+		tor_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_tor else f"{Colors.GREEN}✓ NO{Colors.END}"
+		datacenter_status = f"{Colors.RED}⚠ YES{Colors.END}" if is_datacenter else f"{Colors.GREEN}✓ NO{Colors.END}"
+		residential_status = f"{Colors.YELLOW}◆ YES{Colors.END}" if is_residential else f"{Colors.GREEN}✓ NO{Colors.END}"
+		mobile_status = f"{Colors.YELLOW}◆ YES{Colors.END}" if is_mobile else f"{Colors.GREEN}✓ NO{Colors.END}"
 		print(f"  VPN Detected:        {vpn_status}")
 		print(f"  Proxy Detected:      {proxy_status}")
 		print(f"  Hosting Provider:    {hosting_status}")
 		print(f"  Home Proxy:          {home_proxy_status}")
+		print(f"  Tor Network:         {tor_status}")
+		print(f"  Datacenter:          {datacenter_status}")
+		print(f"  Residential:         {residential_status}")
+		print(f"  Mobile Network:      {mobile_status}")
 		print(f"  Premium Data:        {Colors.YELLOW}{'✓ YES' if ipinfo.get('premium', False) else '○ NO'}{Colors.END}")
 	else:
 		print(f"{Colors.RED}[!] Could not retrieve geoip data.{Colors.END}")
@@ -220,11 +242,11 @@ def osint_report(ip, port_range=None):
 
 		print(f"\n{Colors.BOLD}{Colors.BLUE}╔ THREAT INTELLIGENCE ╗{Colors.END}")
 		vpn_proxy_status = f"{Colors.RED}⚠ YES{Colors.END}" if vpn_proxy else f"{Colors.GREEN}✓ NO{Colors.END}"
-		housting_status = f"{Colors.RED}⚠ YES{Colors.END}" if hosting else f"{Colors.GREEN}✓ NO{Colors.END}"
+		hosting_status = f"{Colors.RED}⚠ YES{Colors.END}" if hosting else f"{Colors.GREEN}✓ NO{Colors.END}"
 		dwifi_status = f"{Colors.RED}⚠ YES{Colors.END}" if public_wifi else f"{Colors.GREEN}✓ NO{Colors.END}"
 		print(f"  VPN/Proxy Detected:  {vpn_proxy_status}")
 		print(f"  Hosting Provider:    {hosting_status}")
-		print(f"  Public Hotspot/Tor:  {wifi_status}")
+		print(f"  Public Hotspot/Tor:  {dwifi_status}")
 		if ipqs:
 			fraud_score = ipqs.get('fraud_score', 'N/A')
 			print(f"  IPQualityScore:      {Colors.YELLOW}{fraud_score}{Colors.END}")
@@ -261,7 +283,8 @@ def export_json(ip, ipinfo, open_ports):
 			"metadata": {
 				"scan_date": datetime.now().isoformat(),
 				"target_ip": ip,
-				"scanner": "Network OSINT Scanner v2.5"
+				"scanner": "Network OSINT Scanner v2.5",
+				"api_source": "suicixde.com"
 			},
 			"geolocation": ipinfo if ipinfo else {},
 			"ports": {
@@ -299,15 +322,34 @@ def export_csv(ip, ipinfo, open_ports):
 				writer.writerow(["GEOLOCATION", ""])
 				writer.writerow(["IP", ipinfo.get('ip', ip)])
 				writer.writerow(["Hostname", ipinfo.get('hostname', 'N/A')])
-				writer.writerow(["Country", ipinfo.get('country_name', 'N/A')])
+				writer.writerow(["Country", f"{ipinfo.get('country_name', 'N/A')} ({ipinfo.get('country_code', 'N/A')})"])
 				writer.writerow(["City", ipinfo.get('city', 'N/A')])
+				writer.writerow(["Region", ipinfo.get('region', 'N/A')])
+				writer.writerow(["Continent", f"{ipinfo.get('continent_name', 'N/A')} ({ipinfo.get('continent_code', 'N/A')})"])
+				writer.writerow(["Latitude", ipinfo.get('latitude', 'N/A')])
+				writer.writerow(["Longitude", ipinfo.get('longitude', 'N/A')])
+				writer.writerow(["Accuracy Radius (km)", ipinfo.get('accuracy_radius', 'N/A')])
+				writer.writerow(["Timezone", f"{ipinfo.get('timezone_name', 'N/A')} (UTC{ipinfo.get('utc_offset', 0)/3600:+.0f})"])
+				writer.writerow(["Currency", f"{ipinfo.get('currency_name', 'N/A')} ({ipinfo.get('currency_code', 'N/A')})"])
+				writer.writerow(["Language", f"{ipinfo.get('language_name', 'N/A')} ({ipinfo.get('language_code', 'N/A')})"])
 				writer.writerow(["ISP", ipinfo.get('isp', 'N/A')])
 				writer.writerow(["Organization", ipinfo.get('org', 'N/A')])
 				writer.writerow(["ASN", ipinfo.get('asn', 'N/A')])
+				writer.writerow(["ASN Org", ipinfo.get('asn_org', 'N/A')])
+				writer.writerow(["RIR", ipinfo.get('rir', 'N/A')])
+				writer.writerow(["Connection Type", ipinfo.get('connection_type', 'N/A')])
 				writer.writerow(["Threat Level", ipinfo.get('threat_level', 'N/A')])
+				writer.writerow(["", ""])
+				writer.writerow(["SECURITY FLAGS", ""])
 				writer.writerow(["VPN Detected", ipinfo.get('is_vpn', False)])
 				writer.writerow(["Proxy Detected", ipinfo.get('is_proxy', False)])
 				writer.writerow(["Hosting Provider", ipinfo.get('is_hosting', False)])
+				writer.writerow(["Home Proxy", ipinfo.get('is_home_proxy', False)])
+				writer.writerow(["Tor Network", ipinfo.get('is_tor', False)])
+				writer.writerow(["Datacenter", ipinfo.get('is_datacenter', False)])
+				writer.writerow(["Residential", ipinfo.get('is_residential', False)])
+				writer.writerow(["Mobile Network", ipinfo.get('is_mobile', False)])
+				writer.writerow(["Premium Data", ipinfo.get('premium', False)])
 				writer.writerow(["", ""])
 			
 			# Write port results
@@ -339,24 +381,36 @@ def save_report(ip, ipinfo, open_ports):
 				f.write("-"*70 + "\n")
 				f.write(f"IP:                  {ipinfo.get('ip', ip)}\n")
 				f.write(f"Hostname:            {ipinfo.get('hostname', 'N/A')}\n")
-				f.write(f"City:                {ipinfo.get('city', 'N/A')}\n")
-				f.write(f"Region:              {ipinfo.get('region', 'N/A')}\n")
-				f.write(f"Country:             {ipinfo.get('country_name', ipinfo.get('country', 'N/A'))}\n")
-				f.write(f"ISP:                 {ipinfo.get('isp', 'N/A')}\n")
-				f.write(f"Organization:        {ipinfo.get('org', 'N/A')}\n")
-				f.write(f"ASN:                 {ipinfo.get('asn', ipinfo.get('asn_number', 'N/A'))}\n")
-				f.write(f"Connection Type:     {ipinfo.get('connection_type', 'N/A')}\n")
-				f.write(f"Threat Level:        {ipinfo.get('threat_level', 'N/A')}\n\n")
-				
-				f.write("SECURITY FLAGS:\n")
-				f.write("-"*70 + "\n")
-				f.write(f"VPN Detected:        {ipinfo.get('is_vpn', False)}\n")
-				f.write(f"Proxy Detected:      {ipinfo.get('is_proxy', False)}\n")
-				f.write(f"Hosting Provider:    {ipinfo.get('is_hosting', False)}\n")
-				f.write(f"Home Proxy:          {ipinfo.get('is_home_proxy', False)}\n")
-				f.write(f"Premium Data:        {ipinfo.get('premium', False)}\n\n")
+			f.write(f"Country:             {ipinfo.get('country_name', 'N/A')} ({ipinfo.get('country_code', 'N/A')})\n")
+			f.write(f"City:                {ipinfo.get('city', 'N/A')}\n")
+			f.write(f"Region:              {ipinfo.get('region', 'N/A')}\n")
+			f.write(f"Continent:           {ipinfo.get('continent_name', 'N/A')} ({ipinfo.get('continent_code', 'N/A')})\n")
+			f.write(f"Latitude:            {ipinfo.get('latitude', 'N/A')}\n")
+			f.write(f"Longitude:           {ipinfo.get('longitude', 'N/A')}\n")
+			f.write(f"Accuracy Radius:     {ipinfo.get('accuracy_radius', 'N/A')} km\n")
+			f.write(f"Timezone:            {ipinfo.get('timezone_name', 'N/A')}\n")
+			f.write(f"UTC Offset:          {ipinfo.get('utc_offset', 0)} seconds\n")
+			f.write(f"Currency:            {ipinfo.get('currency_name', 'N/A')} ({ipinfo.get('currency_code', 'N/A')})\n")
+			f.write(f"Language:            {ipinfo.get('language_name', 'N/A')} ({ipinfo.get('language_code', 'N/A')})\n")
+			f.write(f"ISP:                 {ipinfo.get('isp', 'N/A')}\n")
+			f.write(f"Organization:        {ipinfo.get('org', 'N/A')}\n")
+			f.write(f"ASN:                 {ipinfo.get('asn', 'N/A')}\n")
+			f.write(f"ASN Org:             {ipinfo.get('asn_org', 'N/A')}\n")
+			f.write(f"RIR:                 {ipinfo.get('rir', 'N/A')}\n")
+			f.write(f"Connection Type:     {ipinfo.get('connection_type', 'N/A')}\n")
+			f.write(f"Threat Level:        {ipinfo.get('threat_level', 'N/A')}\n\n")
 			
-			f.write("PORT SCAN RESULTS:\n")
+			f.write("SECURITY FLAGS:\n")
+			f.write("-"*70 + "\n")
+			f.write(f"VPN Detected:        {ipinfo.get('is_vpn', False)}\n")
+			f.write(f"Proxy Detected:      {ipinfo.get('is_proxy', False)}\n")
+			f.write(f"Hosting Provider:    {ipinfo.get('is_hosting', False)}\n")
+			f.write(f"Home Proxy:          {ipinfo.get('is_home_proxy', False)}\n")
+			f.write(f"Tor Network:         {ipinfo.get('is_tor', False)}\n")
+			f.write(f"Datacenter:          {ipinfo.get('is_datacenter', False)}\n")
+			f.write(f"Residential:         {ipinfo.get('is_residential', False)}\n")
+			f.write(f"Mobile Network:      {ipinfo.get('is_mobile', False)}\n")
+			f.write(f"\nPORT RESULTS:\n")
 			f.write("-"*70 + "\n")
 			if open_ports:
 				f.write(f"Open Ports: {', '.join(str(p) for p in open_ports)}\n")

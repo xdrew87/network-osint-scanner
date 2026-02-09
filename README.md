@@ -32,15 +32,15 @@ Perfect for:
 ## ✨ Features
 
 - **⚡ Professional UI** - Beautiful color-coded output with ASCII art banner
-- **🌍 IP Geolocation** - Get detailed geographic and ISP information  
-- **🔌 Advanced Port Scanning** - Scan any port range from 1-65535
-- **🛡️ Security Detection** - Identify VPNs, proxies, and hosting providers
-- **📊 Threat Assessment** - Real-time threat level evaluation with cross-API verification
-- **📈 Progress Tracking** - Live visual progress bar with percentage display
-- **📁 Batch Processing** - Scan multiple targets concurrently from a file
-- **💾 Multi-Format Exports** - Save reports as TXT, JSON, and CSV simultaneously
-- **🔄 Multiple APIs** - Cross-reference data from multiple threat intelligence sources
-- **📱 Dual Mode Interface** - Interactive menu system or command-line arguments
+- **🌍 Comprehensive IP Geolocation** - Coordinates, timezone, currency, language, continent, ASN, RIR lookup  
+- **🔌 Advanced Port Scanning** - Scan any port range from 1-65535 with real-time discovery
+- **🛡️ Enhanced Security Detection** - 9 security flags: VPN, Proxy, Hosting, Datacenter, Tor, Residential, Mobile, Home Proxy, Premium
+- **📊 Threat Assessment** - Real-time threat level evaluation with multiple security indicators
+- **📈 Progress Tracking** - Live visual progress bar with percentage and block visualization
+- **📁 Batch Processing** - Scan multiple targets from a file
+- **💾 Multi-Format Exports** - Save reports as TXT, JSON, and CSV simultaneously with all data
+- **🌐 Global Information** - Currency, language, timezone for each IP location
+- **📱 Dual Mode Interface** - Interactive menu system or direct command-line arguments
 
 ---
 
@@ -142,15 +142,39 @@ VPNAPIIO_API_KEY = "your_actual_api_key_here"
 Every scan automatically generates **three report formats**:
 
 ### Text Report (.txt)
-Human-readable format with formatted sections:
+Human-readable format with complete geolocation and security information:
 ```
-OSINT REPORT FOR 8.8.8.8
-═══════════════════════════════════════════════════════
+OSINT REPORT FOR 1.1.1.1
+══════════════════════════════════════════════════════════════
 GEO-IP DATA:
-  IP Address: 8.8.8.8
-  Country: United States
-  ISP: Google
-  ...
+  IP Address:          1.1.1.1
+  Hostname:            one.one.one.one
+  Country:             Hong Kong (HK)
+  City:                Hong Kong
+  Region:              Central and Western District
+  Continent:           Asia
+  Latitude:            22.3193
+  Longitude:           114.1693
+  Accuracy Radius:     1000 km
+  Timezone:            Asia/Hong_Kong
+  Currency:            Hong Kong Dollar (HKD)
+  Language:            Mandarin Chinese (zh)
+  ISP:                 Cloudflare, Inc
+  Organization:        APNIC and Cloudflare DNS Resolver project
+  ASN:                 AS13335 Cloudflare, Inc.
+  Connection Type:     Hosting
+  Threat Level:        medium
+
+SECURITY FLAGS:
+  VPN Detected:        False
+  Proxy Detected:      False
+  Hosting Provider:    True
+  Datacenter:          False
+  Tor Network:         False
+  Residential:         False
+  Mobile Network:      False
+  Premium Data:        False
+
 PORT SCAN RESULTS:
   Open Ports: 80, 443
 ```
@@ -160,54 +184,123 @@ Structured data for automation and integration:
 ```json
 {
   "metadata": {
-    "scan_date": "2026-02-09T15:30:45",
-    "target_ip": "8.8.8.8",
-    "scanner": "Network OSINT Scanner v2.5"
+    "scan_date": "2026-02-09T15:30:45Z",
+    "target_ip": "1.1.1.1",
+    "scanner": "Network OSINT Scanner v2.5",
+    "api_source": "suicixde.com"
   },
-  "geolocation": { ... },
-  "ports": { "open_count": 2, "open_ports": [80, 443] }
+  "geolocation": {
+    "ip": "1.1.1.1",
+    "hostname": "one.one.one.one",
+    "country": "Hong Kong",
+    "country_code": "HK",
+    "city": "Hong Kong",
+    "latitude": 22.3193,
+    "longitude": 114.1693,
+    "accuracy_radius": 1000,
+    "timezone_name": "Asia/Hong_Kong",
+    "utc_offset": 28800,
+    "currency_code": "HKD",
+    "currency_name": "Hong Kong Dollar",
+    "language_code": "zh",
+    "language_name": "Mandarin Chinese",
+    "isp": "Cloudflare, Inc",
+    "org": "APNIC and Cloudflare DNS Resolver project",
+    "asn": "AS13335",
+    "asn_number": "13335",
+    "asn_org": "Cloudflare, Inc.",
+    "rir": "APNIC",
+    "connection_type": "Hosting",
+    "threat_level": "medium",
+    "is_vpn": false,
+    "is_proxy": false,
+    "is_hosting": true,
+    "is_datacenter": false,
+    "is_tor": false,
+    "is_residential": false,
+    "is_mobile": false,
+    "premium": false
+  },
+  "ports": { 
+    "open_count": 2, 
+    "open_ports": [80, 443] 
+  }
 }
 ```
 
 ### CSV Export (.csv)
-Spreadsheet-compatible format for analysis:
+Spreadsheet-compatible format for analysis in Excel or Google Sheets:
 ```csv
 Field,Value
 Scan Date,2026-02-09 15:30:45
-Target IP,8.8.8.8
-Country,United States
-...
+Target IP,1.1.1.1
+GEOLOCATION,
+IP,1.1.1.1
+Hostname,one.one.one.one
+Country,Hong Kong (HK)
+City,Hong Kong
+Region,Central and Western District
+Continent,Asia
+Latitude,22.3193
+Longitude,114.1693
+Accuracy Radius (km),1000
+Timezone,Asia/Hong_Kong (UTC+8)
+Currency,Hong Kong Dollar (HKD)
+Language,Mandarin Chinese (zh)
+ISP,Cloudflare, Inc
+Organization,APNIC and Cloudflare DNS Resolver project
+ASN,AS13335 Cloudflare, Inc.
+RIR,APNIC
+Connection Type,Hosting
+Threat Level,medium
+SECURITY FLAGS,
+VPN Detected,False
+Proxy Detected,False
+Hosting Provider,True
+Datacenter,False
+Tor Network,False
+Residential,False
+Mobile Network,False
+Premium Data,False
+PORTS,
+Total Open Ports,2
 Open Port,80
 Open Port,443
 ```
 
-**All three formats are generated automatically after each scan!**
+**All three formats are generated automatically after each scan with complete geolocation and security data!**
 
 ---
 
 ## 📈 Output Information
 
-### Geolocation Data
-- IP Address
-- Hostname
-- City, Region, Country
-- ISP & Organization
-- ASN (Autonomous System Number)
-- Connection Type
+### Comprehensive Geolocation Data
+- **Network Info**: IP, Hostname, ISP, Organization, Connection Type
+- **Geographic Data**: Country, City, Region, Continent, Postal Code
+- **Coordinates**: Latitude, Longitude, Accuracy Radius (km)
+- **Timezone Info**: Timezone name, UTC offset
+- **Regional Details**: Currency, Language, Currency Code, Language Code
+- **ASN Details**: ASN Number, ASN Org, RIR (Regional Internet Registry)
+- **Threat Level**: Risk assessment and threat classification
 
-### Security Flags
+### Advanced Security Flags (9 Detections)
 - VPN Detection
 - Proxy Detection
 - Hosting Provider Identification
-- Threat Level Assessment
-- Fraud Score (if API available)
+- Datacenter Detection
+- Tor Network Detection
+- Residential Connection
+- Mobile Network Detection
+- Home Proxy Detection
+- Premium Data Availability
 
-### Scan Results
-- ✓ Open ports discovery
-- ✓ Visual progress bar (real-time)
-- ✓ Threat level classification
-- ✓ Automatic timestamped reports
-- ✓ Multi-format export (TXT + JSON + CSV)
+### Port Scan Results
+- Open ports discovery with real-time notifications
+- Custom port range (1-65535)
+- Visual progress bar with percentage tracking
+- Common ports quick scan option
+- Batch scanning from file
+- Comprehensive threat level analysis
 
 ---
 

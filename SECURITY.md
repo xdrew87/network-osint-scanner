@@ -114,7 +114,7 @@ If integrating into larger systems:
 
 For security concerns not suitable for GitHub:
 
-**Email:** security@github-account.example.com
+**Email:** securityxdrew87.variably659@passmail.net
 
 Please include:
 - Vulnerability details
